@@ -52,7 +52,7 @@ def write_scales_to_file(scale, file_name):
 
 
 def write_arr_to_file(arr, file_name):
-    with open(file_name, mode='w', newline='') as file:
+    with open(file_name, 'a', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(arr)
     return True
