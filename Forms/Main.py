@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 class DrawingApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("Drawing Application")
+        self.master.title("Окно распознания рисунков")
         self.master.geometry("512x512")  # Set window size to 512x512 pixels
 
         load_dotenv()
@@ -34,23 +34,32 @@ class DrawingApp:
         self.canvas.bind("<B1-Motion>", self.paint)
 
         # Кнопки
-        self.recognition_button = tk.Button(frame, text="Recognize", command=self.picture_recognition)
+        self.recognition_button = tk.Button(frame, text="Распознать", command=self.picture_recognition)
         self.recognition_button.pack(side=tk.LEFT, padx=5)
 
-        self.clear_button = tk.Button(frame, text="Clear", command=self.clear_canvas)
+        self.clear_button = tk.Button(frame, text="Очистить", command=self.clear_canvas)
         self.clear_button.pack(side=tk.LEFT, padx=5)
 
-        self.neural_network_button = tk.Button(frame, text="Neural Network", command=self.open_neural_network_window)
+        self.neural_network_button = tk.Button(frame, text="Окно нейросети", command=self.open_neural_network_window)
         self.neural_network_button.pack(side=tk.LEFT, padx=5)
+        # Text box для вывода
+        self.output_text = tk.StringVar()
+        self.output_text.set("")  # Initial empty string
+        font = ('Helvetica', 30)  # Пример размера шрифта
+        self.output_field = tk.Entry(frame, textvariable=self.output_text, state='disabled', width=40, font = font)
+        self.output_field.pack(side=tk.BOTTOM, padx=5)
 
     def paint(self, event):
-        x1, y1 = (event.x - 1), (event.y - 1)
-        x2, y2 = (event.x + 1), (event.y + 1)
+        # Задание размера карандаша
+        pen_size = 5  # Пример размера карандаша в пикселях
+        x1, y1 = (event.x - pen_size), (event.y - pen_size)
+        x2, y2 = (event.x + pen_size), (event.y + pen_size)
         self.canvas.create_oval(x1, y1, x2, y2, fill='black', outline='black')
 
     def picture_recognition(self):
         # Stub function for picture recognition
-        print("Picture recognition function called.")
+        #print("Picture recognition function called.")
+        self.output_text.set("Recognition result goes here!")  # Example text for testing
 
     def clear_canvas(self):
         self.canvas.delete("all")
