@@ -3,7 +3,7 @@ import os
 import numpy as np
 from dotenv import load_dotenv
 
-from Auxiliary import back_propagation, binary_cross_entropy
+from Auxiliary import back_propagation, binary_cross_entropy, softmax
 from .NeuronNet import neuron_net
 from .CRUD_files import *
 
@@ -93,8 +93,8 @@ def train_validate_for_metrics(epochs, res_the_scales=False):
     for epoch in range(epochs):
         if img_matrix is not None:
 
-            number_err = np.empty(0)
-            count_true = 0
+            number_err = []
+            #count_true = 0
             data_for_metrics = np.zeros((count_class, 4))
             precision_arr = np.zeros(count_class)
             recall_arr = np.zeros(count_class)
@@ -124,9 +124,12 @@ def train_validate_for_metrics(epochs, res_the_scales=False):
                 number_err.append(back_propagation(layer_matrices, true_answer))
 
             for i in range(count_class):
-                precision_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][2])
-                recall_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][1])
-                accuracy_arr[i] += (data_for_metrics[i][0] + data_for_metrics[i][3]) / (
+                if (data_for_metrics[i][0] + data_for_metrics[i][2]) != 0:
+                    precision_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][2])
+                if (data_for_metrics[i][0] + data_for_metrics[i][1]) != 0:
+                    recall_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][1])
+                if ((data_for_metrics[i][0] + data_for_metrics[i][1] + data_for_metrics[i][2] + data_for_metrics[i][3])) != 0:
+                    accuracy_arr[i] += (data_for_metrics[i][0] + data_for_metrics[i][3]) / (
                             data_for_metrics[i][0] + data_for_metrics[i][1] + data_for_metrics[i][2] +
                             data_for_metrics[i][3])
 
@@ -142,8 +145,8 @@ def train_validate_for_metrics(epochs, res_the_scales=False):
 
         if img_matrix1 is not None:
 
-            number_err = np.empty(0)
-            count_true = 0
+            number_err = []
+            #count_true = 0
             data_for_metrics = np.zeros((count_class, 4))
             precision_arr = np.zeros(count_class)
             recall_arr = np.zeros(count_class)
@@ -155,7 +158,7 @@ def train_validate_for_metrics(epochs, res_the_scales=False):
 
                 layer_matrices = img_matrix1[0].iloc[i]
                 end_y, layer_matrices = neuron_net(layer_matrices, scales_index)
-                print(f"Result{i} for {img_matrix1[1][i]}:\n{layer_matrices}")
+                #print(f"Result{i} for {img_matrix1[1][i]}:\n{layer_matrices}")
                 true_answer = img_matrix1[1][i][0] - 1
 
                 get_answer = end_y.idxmax()
@@ -173,13 +176,18 @@ def train_validate_for_metrics(epochs, res_the_scales=False):
 
                 answer = np.zeros(10)
                 answer[true_answer] = 1
-                loss = binary_cross_entropy(answer, layer_matrices[3])
+                loss = binary_cross_entropy(answer, softmax(layer_matrices[3]))
                 number_err.append(loss)
 
             for i in range(count_class):
-                precision_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][2])
-                recall_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][1])
-                accuracy_arr[i] += (data_for_metrics[i][0] + data_for_metrics[i][3]) / (data_for_metrics[i][0] + data_for_metrics[i][1] + data_for_metrics[i][2] + data_for_metrics[i][3])
+                if (data_for_metrics[i][0] + data_for_metrics[i][2]) != 0:
+                    precision_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][2])
+                if (data_for_metrics[i][0] + data_for_metrics[i][1]) != 0:
+                    recall_arr[i] += data_for_metrics[i][0] / (data_for_metrics[i][0] + data_for_metrics[i][1])
+                if ((data_for_metrics[i][0] + data_for_metrics[i][1] + data_for_metrics[i][2] + data_for_metrics[i][3])) != 0:
+                    accuracy_arr[i] += (data_for_metrics[i][0] + data_for_metrics[i][3]) / (
+                            data_for_metrics[i][0] + data_for_metrics[i][1] + data_for_metrics[i][2] +
+                            data_for_metrics[i][3])
 
             loss = np.mean(number_err)
             accuracy = np.mean(accuracy_arr)
