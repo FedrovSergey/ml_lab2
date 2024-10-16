@@ -25,6 +25,9 @@ def train(epochs, res_the_scales=False):
         if img_matrix is not None:
             number_err = []
             count_true = 0
+            data_for_metrics = [10][4]
+            precision_arr = [10]
+            recall_arr = [10]
 
             row = img_matrix[0].shape[0]
 
@@ -38,6 +41,8 @@ def train(epochs, res_the_scales=False):
                     count_true += 1
                 number_err.append(back_propagation(layer_matrices, true_answer))
             accuracy = count_true / row
+            precision = 0
+            recall = 0
 
             write_arr_to_file(number_err, './Files/errors_entropy.csv')
         print(f"Later {epoch+1} epochs.")
