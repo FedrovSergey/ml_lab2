@@ -139,6 +139,8 @@ import tkinter as tk
 from tkinter import messagebox, Toplevel
 
 from Service import train, validation
+from Service.Train import train_validate_for_metrics
+
 
 class NeuralNetworkWindow:
     def __init__(self, master):
@@ -180,6 +182,8 @@ class NeuralNetworkWindow:
                 print(f"Train from scratch for {epochs} epochs.")
                 # Add your training logic here
                 train(epochs, True)
+                #для вывода данных нужных для графиков в нужной последовательности
+                #train_validate_for_metrics(epochs, True)
 
     def retrain(self):
         if self.confirm_action("Are you sure you want to start learning without zeroing weights?"):
